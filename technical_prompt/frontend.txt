@@ -1,0 +1,518 @@
+# Frontend Technical Prompt - Financial Management PWA
+
+## Project Overview
+Develop a Progressive Web Application (PWA) for a multi-user financial management system. The application should provide intuitive interfaces for expense tracking, budget management, and real-time collaboration with responsive design for both web and mobile platforms.
+
+## Technology Stack
+- **Framework**: React 18+ with TypeScript
+- **State Management**: Redux Toolkit with RTK Query
+- **UI Framework**: Material-UI (MUI) v5 with custom theming
+- **PWA**: Workbox for service worker management
+- **Real-time**: Socket.io client for WebSocket connections
+- **Charts**: Chart.js with React-Chartjs-2
+- **Forms**: React Hook Form with Yup validation
+- **Testing**: Jest, React Testing Library, Cypress for E2E
+- **Build Tool**: Vite for fast development and optimized builds
+
+## Core Requirements
+
+### 1. Project Structure
+```
+financial_frontend/
+├── public/
+│   ├── manifest.json
+│   ├── sw.js
+│   ├── icons/ (PWA icons)
+│   └── index.html
+├── src/
+│   ├── components/
+│   │   ├── common/
+│   │   │   ├── Layout/
+│   │   │   ├── Navigation/
+│   │   │   ├── Forms/
+│   │   │   ├── Charts/
+│   │   │   └── UI/
+│   │   ├── auth/
+│   │   ├── financial/
+│   │   ├── budget/
+│   │   ├── sharing/
+│   │   └── admin/
+│   ├── pages/
+│   │   ├── Dashboard/
+│   │   ├── Transactions/
+│   │   ├── Budgets/
+│   │   ├── Analytics/
+│   │   ├── Settings/
+│   │   └── Auth/
+│   ├── hooks/
+│   │   ├── useAuth.ts
+│   │   ├── useWebSocket.ts
+│   │   ├── useNotifications.ts
+│   │   └── useLocalStorage.ts
+│   ├── store/
+│   │   ├── index.ts
+│   │   ├── slices/
+│   │   └── api/
+│   ├── services/
+│   │   ├── api.ts
+│   │   ├── websocket.ts
+│   │   ├── auth.ts
+│   │   └── storage.ts
+│   ├── utils/
+│   │   ├── validators.ts
+│   │   ├── formatters.ts
+│   │   ├── constants.ts
+│   │   └── helpers.ts
+│   ├── types/
+│   │   ├── auth.ts
+│   │   ├── financial.ts
+│   │   ├── budget.ts
+│   │   └── api.ts
+│   ├── styles/
+│   │   ├── theme.ts
+│   │   ├── globals.css
+│   │   └── components/
+│   └── assets/
+├── tests/
+├── cypress/
+├── package.json
+├── vite.config.ts
+├── tsconfig.json
+└── README.md
+```
+
+### 2. PWA Implementation
+
+#### Service Worker Features
+- **Offline Support**: Cache critical app resources and API responses
+- **Background Sync**: Queue failed API requests for retry when online
+- **Push Notifications**: Budget alerts and sharing notifications
+- **App Updates**: Automatic updates with user notification
+- **Cache Management**: Strategic caching for optimal performance
+
+#### PWA Manifest
+```json
+{
+  "name": "Financial Manager",
+  "short_name": "FinanceApp",
+  "description": "Personal Financial Management System",
+  "theme_color": "#1976d2",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+```
+
+#### Install Prompt
+- **Custom Install Banner**: User-friendly installation prompts
+- **Cross-platform Support**: iOS Safari, Android Chrome installation
+- **Installation Analytics**: Track installation rates and user engagement
+
+### 3. Authentication & User Management
+
+#### Authentication Flow
+- **Login/Registration**: Clean forms with validation
+- **2FA Setup**: QR code generation and verification
+- **Password Recovery**: Step-by-step recovery process
+- **Session Management**: Automatic token refresh, secure logout
+- **Remember Device**: Optional device trust for 2FA
+
+#### User Interface Components
+```typescript
+// Authentication Components
+- LoginForm: Email/password with 2FA support
+- RegisterForm: User registration with email verification
+- ForgotPasswordForm: Password reset flow
+- TwoFactorSetup: QR code and backup codes
+- ProfileSettings: User profile management
+- SecuritySettings: Password change, 2FA toggle
+```
+
+### 4. Dashboard & Navigation
+
+#### Main Dashboard
+- **Overview Cards**: Total income, expenses, budget progress
+- **Quick Actions**: Add expense, income, transfer buttons
+- **Recent Transactions**: Latest 10 transactions with inline editing
+- **Budget Progress Bars**: Visual budget tracking
+- **Expense Categories**: Pie chart of spending by category
+- **Monthly Trends**: Line chart of income vs expenses
+
+#### Navigation Structure
+```
+Main Navigation:
+├── Dashboard (overview)
+├── Transactions
+│   ├── Expenses
+│   ├── Income
+│   └── Transfers
+├── Budgets
+│   ├── Current Budgets
+│   ├── Budget Analytics
+│   └── Create Budget
+├── Analytics
+│   ├── Spending Trends
+│   ├── Category Analysis
+│   └── Export Data
+├── Sharing
+│   ├── Shared With Me
+│   ├── My Shares
+│   └── Permissions
+└── Settings
+    ├── Profile
+    ├── Preferences
+    ├── Security
+    └── Admin Panel (admin only)
+```
+
+### 5. Financial Records Management
+
+#### Transaction Interface
+- **Add Transaction Form**: Multi-step form with category selection
+- **Transaction List**: Sortable, filterable table with inline editing
+- **Bulk Import**: CSV/Excel file upload with preview
+- **Custom Fields**: Dynamic form fields per user configuration
+- **Search & Filter**: Advanced filtering by date, amount, category, tags
+
+#### Form Components
+```typescript
+// Transaction Forms
+interface TransactionForm {
+  type: 'expense' | 'income' | 'transfer'
+  amount: number
+  currency: string
+  category: string
+  description: string
+  date: Date
+  customFields: Record<string, any>
+  attachments?: File[]
+}
+
+// Custom Field Types
+type CustomFieldType = 'text' | 'number' | 'date' | 'boolean' | 'select'
+```
+
+#### Categories Management
+- **Category Creation**: Icon picker, color selection, parent category
+- **Category Analytics**: Spending by category with charts
+- **Budget Allocation**: Assign budget amounts per category
+- **Category Sharing**: Share custom categories between users
+
+### 6. Budget Management Interface
+
+#### Budget Creation Wizard
+- **Step 1**: Budget name, period (monthly/yearly), currency
+- **Step 2**: Category allocation with percentage/amount
+- **Step 3**: Alert thresholds and notification settings
+- **Step 4**: Review and confirmation
+
+#### Budget Dashboard
+- **Progress Visualization**: Circular progress charts per category
+- **Remaining Budget**: Clear indicators of remaining amounts
+- **Overspending Alerts**: Red indicators for exceeded budgets
+- **Historical Comparison**: Compare with previous periods
+- **Adjustment Tools**: Quick budget modification interface
+
+### 7. Analytics & Reporting
+
+#### Chart Components
+- **Spending Trends**: Line charts showing monthly/yearly trends
+- **Category Breakdown**: Pie charts and donut charts
+- **Income vs Expenses**: Bar charts with comparisons
+- **Budget Performance**: Progress bars and gauge charts
+- **Savings Rate**: Visual savings rate tracking
+
+#### Report Features
+- **Custom Date Ranges**: Flexible period selection
+- **Export Options**: PDF, CSV, Excel export functionality
+- **Scheduled Reports**: Email reports on budget milestones
+- **Comparative Analysis**: Year-over-year, month-over-month comparisons
+
+### 8. Real-time Features
+
+#### WebSocket Integration
+- **Live Updates**: Real-time transaction updates from other users
+- **Notification System**: In-app notifications for shared data changes
+- **Presence Indicators**: Show online users in shared spaces
+- **Conflict Resolution**: Handle concurrent edits gracefully
+
+#### Notification Components
+```typescript
+interface NotificationTypes {
+  budgetAlert: 'Budget threshold exceeded'
+  sharedUpdate: 'Shared record modified'
+  systemAlert: 'System maintenance notice'
+  achievement: 'Savings goal reached'
+}
+```
+
+### 9. Responsive Design & Mobile Experience
+
+#### Breakpoint Strategy
+```css
+/* Mobile First Approach */
+Mobile: 0-599px (single column, touch-optimized)
+Tablet: 600-959px (two columns, hybrid navigation)
+Desktop: 960px+ (full layout, keyboard shortcuts)
+```
+
+#### Mobile-Specific Features
+- **Touch Gestures**: Swipe to delete, pull to refresh
+- **Quick Entry**: Floating action buttons for rapid transaction entry
+- **Camera Integration**: Receipt scanning and attachment
+- **Haptic Feedback**: Touch feedback for important actions
+- **Offline Mode**: Full functionality without internet connection
+
+### 10. Sharing & Collaboration
+
+#### Sharing Interface
+- **Share Modal**: User search, permission selection, message
+- **Shared Items View**: List of items shared with others
+- **Permissions Management**: Granular permission controls
+- **Share Notifications**: Real-time sharing request notifications
+
+#### Permission Types
+```typescript
+interface SharingPermissions {
+  viewOnly: boolean
+  canEdit: boolean
+  canDelete: boolean
+  canShare: boolean
+  categories: string[] // specific categories
+  dateRange: [Date, Date] // time-limited access
+}
+```
+
+### 11. Data Import/Export
+
+#### Import Features
+- **CSV Import**: Bank statement import with field mapping
+- **Excel Support**: Multi-sheet workbook processing
+- **Format Templates**: Downloadable import templates
+- **Data Validation**: Preview and error correction before import
+- **Duplicate Detection**: Smart duplicate transaction detection
+
+#### Export Features
+- **Flexible Formats**: CSV, Excel, PDF, JSON export options
+- **Custom Reports**: User-defined report templates
+- **Scheduled Exports**: Automated periodic exports
+- **Data Backup**: Complete account data backup
+
+### 12. Customization & Preferences
+
+#### Theme Customization
+- **Light/Dark Mode**: System preference detection and manual toggle
+- **Color Schemes**: Multiple predefined themes
+- **Custom Branding**: User-defined colors and logos
+- **Accessibility**: High contrast mode, font size options
+
+#### User Preferences
+```typescript
+interface UserPreferences {
+  currency: string
+  dateFormat: string
+  numberFormat: string
+  language: string
+  notifications: NotificationSettings
+  privacy: PrivacySettings
+  display: DisplaySettings
+}
+```
+
+### 13. Performance Optimization
+
+#### Code Splitting
+- **Route-based Splitting**: Lazy load pages and components
+- **Feature-based Splitting**: Load features on demand
+- **Library Splitting**: Separate vendor bundles
+- **Dynamic Imports**: Runtime module loading
+
+#### Caching Strategy
+- **API Response Caching**: RTK Query with appropriate cache times
+- **Static Asset Caching**: Service worker caching strategy
+- **Component Memoization**: React.memo and useMemo optimization
+- **Virtual Scrolling**: Handle large transaction lists efficiently
+
+### 14. Testing Strategy
+
+#### Unit Testing
+- **Component Testing**: React Testing Library for all components
+- **Hook Testing**: Custom hooks with comprehensive test cases
+- **Utility Testing**: Pure function testing with edge cases
+- **Store Testing**: Redux slice and API testing
+
+#### Integration Testing
+- **User Flow Testing**: Complete feature workflows
+- **API Integration**: Mock API responses and error scenarios
+- **Real-time Testing**: WebSocket connection and message handling
+- **PWA Testing**: Service worker and offline functionality
+
+#### E2E Testing (Cypress)
+```typescript
+// E2E Test Scenarios
+- User registration and login flow
+- Complete transaction creation process
+- Budget creation and monitoring
+- Data sharing between users
+- Mobile responsive testing
+- PWA installation and offline mode
+```
+
+### 15. Security Implementation
+
+#### Client-side Security
+- **Input Sanitization**: XSS prevention in all forms
+- **Secure Storage**: Encrypted local storage for sensitive data
+- **CSRF Protection**: Token validation for state-changing operations
+- **Content Security Policy**: Strict CSP headers
+
+#### Data Protection
+- **Sensitive Data Handling**: No financial data in logs
+- **Session Security**: Secure token storage and transmission
+- **Privacy Controls**: User data visibility controls
+- **Audit Trail**: Track user actions for security monitoring
+
+### 16. Accessibility (WCAG 2.1 AA)
+
+#### Accessibility Features
+- **Keyboard Navigation**: Full keyboard accessibility
+- **Screen Reader Support**: ARIA labels and semantic HTML
+- **Color Contrast**: WCAG AA compliant color schemes
+- **Focus Management**: Clear focus indicators and logical tab order
+- **Alternative Text**: Images and icons with descriptive alt text
+
+#### Accessibility Testing
+- **Automated Testing**: axe-core integration in tests
+- **Manual Testing**: Keyboard and screen reader testing
+- **User Testing**: Accessibility user feedback sessions
+
+### 17. Internationalization (i18n)
+
+#### Multi-language Support
+- **Language Files**: JSON-based translation files
+- **Currency Formatting**: Locale-specific number formatting
+- **Date Formatting**: Regional date format preferences
+- **RTL Support**: Right-to-left language support
+
+#### Supported Languages (Initial)
+- English (default)
+- Spanish
+- French
+- German
+- Hindi (for Indian market)
+
+### 18. Error Handling & User Experience
+
+#### Error Boundaries
+- **Component Error Boundaries**: Graceful component failure handling
+- **API Error Handling**: User-friendly error messages
+- **Network Error Recovery**: Retry mechanisms and offline queuing
+- **Validation Errors**: Clear, actionable validation feedback
+
+#### Loading States
+- **Skeleton Loading**: Content placeholders during loading
+- **Progressive Loading**: Load critical content first
+- **Optimistic Updates**: Immediate UI updates with rollback capability
+- **Loading Indicators**: Clear progress indication for long operations
+
+### 19. Development Tools
+
+#### Developer Experience
+- **Hot Reload**: Fast development cycle with Vite
+- **TypeScript**: Full type safety throughout the application
+- **ESLint/Prettier**: Code quality and formatting enforcement
+- **Storybook**: Component development and documentation
+
+#### Debugging Tools
+- **Redux DevTools**: State management debugging
+- **React DevTools**: Component debugging and profiling
+- **Service Worker Debugging**: PWA functionality testing
+- **Performance Profiling**: Bundle analysis and performance monitoring
+
+### 20. Deployment & Build Configuration
+
+#### Build Optimization
+```typescript
+// Vite Configuration
+export default defineConfig({
+  build: {
+    target: 'es2015',
+    minify: 'terser',
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          ui: ['@mui/material', '@mui/icons-material'],
+          charts: ['chart.js', 'react-chartjs-2']
+        }
+      }
+    }
+  },
+  pwa: {
+    registerType: 'autoUpdate',
+    workbox: {
+      globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+      runtimeCaching: [
+        {
+          urlPattern: /^https:\/\/api\./,
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'api-cache',
+            expiration: {
+              maxEntries: 100,
+              maxAgeSeconds: 300
+            }
+          }
+        }
+      ]
+    }
+  }
+})
+```
+
+#### CI/CD Pipeline
+- **Automated Testing**: Run all tests before deployment
+- **Security Scanning**: Dependency vulnerability checks
+- **Performance Budgets**: Bundle size and performance monitoring
+- **Multi-environment Deployment**: Development, staging, production
+
+### 21. Documentation Requirements
+
+#### User Documentation
+- **User Manual**: Comprehensive feature guide with screenshots
+- **Video Tutorials**: Key feature walkthroughs
+- **FAQ Section**: Common questions and troubleshooting
+- **Mobile App Guide**: PWA installation and mobile-specific features
+
+#### Developer Documentation
+- **Component Library**: Storybook with all components documented
+- **API Integration**: Frontend-backend integration guide
+- **Contribution Guide**: Development setup and contribution guidelines
+- **Architecture Documentation**: System design and component relationships
+
+## Success Criteria
+1. **PWA Compliance**: Lighthouse PWA score > 90
+2. **Performance**: First Contentful Paint < 2s, Largest Contentful Paint < 4s
+3. **Accessibility**: WCAG 2.1 AA compliance (Lighthouse accessibility score > 95)
+4. **Mobile Experience**: Smooth touch interactions, responsive design
+5. **Offline Functionality**: Core features available offline
+6. **Cross-browser Support**: Chrome, Firefox, Safari, Edge compatibility
+7. **Test Coverage**: >90% component test coverage, complete E2E coverage
+8. **Documentation**: Complete user and developer documentation
+9. **Real-time Features**: < 100ms WebSocket message handling
+10. **Security**: No critical security vulnerabilities in dependencies

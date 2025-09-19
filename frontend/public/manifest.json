@@ -1,0 +1,19 @@
+{
+  "name": "FinanceApp - Personal Financial Management",
+  "short_name": "FinanceApp",
+  "description": "Manage your finances with ease. Track expenses, create budgets, and achieve your financial goals.",
+  "theme_color": "#2563eb",
+  "background_color": "#f8fafc",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["finance", "productivity", "business"]
+}
