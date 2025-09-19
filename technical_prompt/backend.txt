@@ -1,0 +1,325 @@
+# Backend Technical Prompt - Financial Management System
+
+## Project Overview
+Develop a robust backend API for a multi-user financial management system using FastAPI. The system should handle expenses, income, transfers, budgets, and provide comprehensive user management with granular permissions.
+
+## Technology Stack
+- **Framework**: FastAPI (Python 3.9+)
+- **Database**: JSON files (initial), with migration capability to MongoDB
+- **Authentication**: JWT with optional 2FA
+- **Documentation**: Auto-generated OpenAPI/Swagger
+- **Testing**: Pytest with async support
+- **Deployment**: Docker containerization
+
+## Core Requirements
+
+### 1. Architecture & Project Structure
+```
+financial_backend/
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── config.py
+│   ├── database/
+│   │   ├── __init__.py
+│   │   ├── json_handler.py
+│   │   ├── mongodb_handler.py
+│   │   └── base_repository.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   │   ├── financial_record.py
+│   │   ├── budget.py
+│   │   └── permission.py
+│   ├── schemas/
+│   │   ├── __init__.py
+│   │   ├── user_schemas.py
+│   │   ├── financial_schemas.py
+│   │   └── budget_schemas.py
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── auth.py
+│   │   ├── users.py
+│   │   ├── financial_records.py
+│   │   ├── budgets.py
+│   │   └── sharing.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── auth_service.py
+│   │   ├── financial_service.py
+│   │   ├── budget_service.py
+│   │   └── notification_service.py
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   ├── security.py
+│   │   ├── validators.py
+│   │   ├── currency.py
+│   │   └── logger.py
+│   └── middleware/
+│       ├── __init__.py
+│       ├── cors.py
+│       └── logging.py
+├── tests/
+├── data/ (for JSON storage)
+├── logs/
+├── requirements.txt
+├── Dockerfile
+├── docker-compose.yml
+└── README.md
+```
+
+### 2. Database Layer
+
+#### JSON Storage Implementation
+- **File Structure**: Separate JSON files per entity type
+- **Data Integrity**: Atomic write operations with backup files
+- **Indexing**: In-memory indexing for performance
+- **Migration Path**: Abstract repository pattern for easy MongoDB migration
+
+#### MongoDB Preparation
+- **Connection Management**: Async motor driver
+- **Schema Design**: Flexible document structure matching JSON format
+- **Migration Tools**: Data transfer utilities between JSON and MongoDB
+
+### 3. Authentication & Authorization
+
+#### User Management
+- **User Types**: Admin, Regular User
+- **Registration**: Email verification, password strength validation
+- **Login**: JWT tokens with refresh mechanism
+- **2FA**: TOTP implementation (optional)
+- **Password Recovery**: Secure reset flow
+
+#### Permission System
+- **Granular Sharing**:
+  - Read-only access to specific records
+  - Edit permissions for shared records
+  - Budget viewing/editing permissions
+  - Category-specific sharing (expenses only, income only, etc.)
+- **Admin Privileges**: User management, system-wide analytics
+- **API Security**: Rate limiting, CORS configuration
+
+### 4. Financial Records Management
+
+#### Core Entities
+```python
+# Financial Record Types
+- Expense: amount, category, description, date, currency, custom_fields
+- Income: amount, source, description, date, currency, custom_fields
+- Transfer: from_user, to_user, amount, description, date, currency
+- Budget: name, amount, period (monthly/yearly), categories, currency
+```
+
+#### Features Required
+- **CRUD Operations**: Full create, read, update, delete for all entities
+- **Custom Fields**: Dynamic field addition per user/record type
+- **Multi-Currency**: Currency conversion support, configurable base currency
+- **Data Validation**: Amount formats, date ranges, required fields
+- **Bulk Operations**: Import/export CSV/Excel files
+- **Search & Filtering**: Advanced query capabilities
+
+### 5. Budget Management
+
+#### Budget Features
+- **Budget Creation**: Monthly/yearly budgets with category allocation
+- **Progress Tracking**: Real-time spending vs budget comparison
+- **Alerts**: Configurable spending thresholds and notifications
+- **Rollover**: Unused budget handling between periods
+- **Analytics**: Budget performance reports and trends
+
+### 6. Real-time Features
+
+#### WebSocket Implementation
+- **Live Updates**: Real-time record updates for shared data
+- **Notifications**: Instant alerts for budget thresholds, shared record changes
+- **Connection Management**: User presence, connection pooling
+- **Message Types**: Record updates, budget alerts, sharing notifications
+
+### 7. API Endpoints Structure
+
+#### Authentication Endpoints
+```
+POST /auth/register
+POST /auth/login
+POST /auth/refresh
+POST /auth/logout
+POST /auth/forgot-password
+POST /auth/reset-password
+POST /auth/enable-2fa
+POST /auth/verify-2fa
+```
+
+#### User Management
+```
+GET /users/profile
+PUT /users/profile
+GET /users/search (admin)
+POST /users/share-permission
+GET /users/shared-with-me
+```
+
+#### Financial Records
+```
+GET /records?type={expense|income|transfer}&filters={}
+POST /records
+PUT /records/{id}
+DELETE /records/{id}
+POST /records/bulk-import
+GET /records/export
+GET /records/analytics
+```
+
+#### Budget Management
+```
+GET /budgets
+POST /budgets
+PUT /budgets/{id}
+DELETE /budgets/{id}
+GET /budgets/{id}/progress
+GET /budgets/{id}/analytics
+```
+
+### 8. Data Validation & Business Logic
+
+#### Validation Rules
+- **Amount Validation**: Positive numbers, decimal precision, currency format
+- **Date Validation**: Valid date ranges, no future dates for expenses
+- **User Validation**: Email format, password complexity, unique constraints
+- **Custom Fields**: Type validation (text, number, date, boolean)
+
+#### Business Rules
+- **Transfer Logic**: Automatic dual-entry for user-to-user transfers
+- **Budget Constraints**: Spending limits, category allocations
+- **Currency Handling**: Automatic conversion, rate updates
+- **Permission Enforcement**: Access control at service layer
+
+### 9. Testing Requirements
+
+#### Test Coverage
+- **Unit Tests**: All service functions, validators, utilities
+- **Integration Tests**: API endpoints, database operations
+- **Authentication Tests**: JWT handling, 2FA flow, permissions
+- **Performance Tests**: Load testing for concurrent users
+- **Security Tests**: SQL injection prevention, XSS protection
+
+#### Test Data
+- **Fixtures**: Sample users, financial records, budgets
+- **Mocking**: External services (currency APIs, email services)
+- **Test Database**: Separate JSON storage for testing
+
+### 10. Logging & Monitoring
+
+#### Logging Implementation
+- **Structured Logging**: JSON format with correlation IDs
+- **Log Levels**: DEBUG, INFO, WARNING, ERROR, CRITICAL
+- **Log Rotation**: Size and time-based rotation
+- **Security Logging**: Authentication attempts, permission violations
+
+#### Monitoring Metrics
+- **API Performance**: Response times, error rates
+- **Database Performance**: Query execution times
+- **User Activity**: Login patterns, feature usage
+- **System Health**: Memory usage, CPU utilization
+
+### 11. Configuration Management
+
+#### Environment Configuration
+```python
+# Development
+DATABASE_TYPE = "json"
+DEBUG = True
+JWT_SECRET_KEY = "dev-secret"
+
+# Production
+DATABASE_TYPE = "mongodb"
+DEBUG = False
+JWT_SECRET_KEY = "secure-production-key"
+MONGODB_URL = "mongodb://..."
+```
+
+#### Feature Flags
+- **2FA_ENABLED**: Toggle two-factor authentication
+- **CURRENCY_AUTO_UPDATE**: Automatic exchange rate updates
+- **REAL_TIME_NOTIFICATIONS**: WebSocket notifications
+- **BUDGET_ALERTS**: Automated budget threshold alerts
+
+### 12. Security Requirements
+
+#### Data Protection
+- **Encryption**: Sensitive data encryption at rest
+- **Input Sanitization**: SQL injection, XSS prevention
+- **Rate Limiting**: API endpoint protection
+- **CORS Policy**: Strict origin validation
+
+#### Privacy Compliance
+- **Data Anonymization**: User data protection
+- **Audit Trail**: Change tracking for financial records
+- **Data Retention**: Configurable record retention policies
+- **Export Compliance**: GDPR data export capabilities
+
+### 13. Performance Optimization
+
+#### Caching Strategy
+- **User Sessions**: Redis/in-memory session caching
+- **Query Results**: Frequently accessed data caching
+- **Currency Rates**: Daily rate caching
+- **Static Data**: Category lists, configuration caching
+
+#### Database Optimization
+- **Indexing**: Efficient query indexes
+- **Pagination**: Large dataset handling
+- **Connection Pooling**: Database connection management
+- **Query Optimization**: Efficient data retrieval patterns
+
+### 14. Deployment Configuration
+
+#### Docker Setup
+```dockerfile
+# Multi-stage build for production optimization
+# Health checks and monitoring
+# Environment-specific configurations
+# Volume management for data persistence
+```
+
+#### CI/CD Pipeline
+- **Automated Testing**: Run full test suite
+- **Security Scanning**: Dependency vulnerability checks
+- **Code Quality**: Linting, formatting, coverage reports
+- **Deployment**: Staging and production deployment automation
+
+### 15. Documentation Requirements
+
+#### API Documentation
+- **OpenAPI/Swagger**: Auto-generated interactive documentation
+- **Endpoint Examples**: Request/response examples for all APIs
+- **Authentication Guide**: JWT implementation and 2FA setup
+- **Error Handling**: Comprehensive error code documentation
+
+#### Developer Documentation
+- **Setup Guide**: Local development environment setup
+- **Architecture Overview**: System design and component interaction
+- **Database Schema**: Entity relationships and field descriptions
+- **Deployment Guide**: Production deployment instructions
+
+### 16. Migration & Scalability
+
+#### Database Migration Tools
+- **JSON to MongoDB**: Data migration utilities
+- **Schema Versioning**: Database schema evolution handling
+- **Backup/Restore**: Data backup and restoration procedures
+- **Performance Monitoring**: Migration progress tracking
+
+#### Scalability Considerations
+- **Horizontal Scaling**: Multiple instance support
+- **Load Balancing**: Request distribution strategies
+- **Caching Layers**: Redis integration for performance
+- **Async Processing**: Background task handling for heavy operations
+
+## Success Criteria
+1. **Functionality**: All specified features implemented and tested
+2. **Performance**: Sub-200ms API response times for standard operations
+3. **Security**: No critical security vulnerabilities
+4. **Documentation**: Complete API and developer documentation
+5. **Test Coverage**: Minimum 90% code coverage
+6. **Deployment**: Successful Docker containerization and deployment
+7. **Migration Ready**: Clean abstraction for MongoDB migration

@@ -1,0 +1,51 @@
+financial_backend/
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── config.py
+│   ├── database/
+│   │   ├── __init__.py
+│   │   ├── json_handler.py
+│   │   ├── mongodb_handler.py
+│   │   └── base_repository.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   │   ├── financial_record.py
+│   │   ├── budget.py
+│   │   └── permission.py
+│   ├── schemas/
+│   │   ├── __init__.py
+│   │   ├── user_schemas.py
+│   │   ├── financial_schemas.py
+│   │   └── budget_schemas.py
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── auth.py
+│   │   ├── users.py
+│   │   ├── financial_records.py
+│   │   ├── budgets.py
+│   │   └── sharing.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── auth_service.py
+│   │   ├── financial_service.py
+│   │   ├── budget_service.py
+│   │   └── notification_service.py
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   ├── security.py
+│   │   ├── validators.py
+│   │   ├── currency.py
+│   │   └── logger.py
+│   └── middleware/
+│       ├── __init__.py
+│       ├── cors.py
+│       └── logging.py
+├── tests/
+├── data/ (for JSON storage)
+├── logs/
+├── requirements.txt
+├── Dockerfile
+├── docker-compose.yml
+└── README.md
