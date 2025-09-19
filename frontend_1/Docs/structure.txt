@@ -1,0 +1,95 @@
+financial_frontend/
+├── public/
+│   ├── manifest.json
+│   ├── sw.js
+│   ├── icons/ (PWA icons: icon-192x192.png, icon-512x512.png)
+│   └── index.html
+├── src/
+│   ├── components/
+│   │   ├── common/
+│   │   │   ├── Layout/
+│   │   │   │   ├── AppLayout.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── Navigation/
+│   │   │   │   ├── AppBar.tsx
+│   │   │   │   └── Drawer.tsx
+│   │   │   ├── Forms/
+│   │   │   │   ├── TransactionForm.tsx
+│   │   │   │   └── BudgetForm.tsx
+│   │   │   ├── Charts/
+│   │   │   │   ├── PieChart.tsx
+│   │   │   │   └── LineChart.tsx
+│   │   │   └── UI/
+│   │   │       ├── LoadingSkeleton.tsx
+│   │   │       └── NotificationToast.tsx
+│   │   ├── auth/
+│   │   │   ├── LoginForm.tsx
+│   │   │   ├── RegisterForm.tsx
+│   │   │   └── TwoFactorSetup.tsx
+│   │   ├── financial/
+│   │   │   ├── TransactionList.tsx
+│   │   │   └── BulkImport.tsx
+│   │   ├── budget/
+│   │   │   ├── BudgetList.tsx
+│   │   │   └── BudgetProgress.tsx
+│   │   ├── sharing/
+│   │   │   └── ShareModal.tsx
+│   │   └── admin/
+│   │       └── UserManagement.tsx
+│   ├── pages/
+│   │   ├── Dashboard/
+│   │   │   └── DashboardPage.tsx
+│   │   ├── Transactions/
+│   │   │   └── TransactionsPage.tsx
+│   │   ├── Budgets/
+│   │   │   └── BudgetsPage.tsx
+│   │   ├── Analytics/
+│   │   │   └── AnalyticsPage.tsx
+│   │   ├── Settings/
+│   │   │   └── SettingsPage.tsx
+│   │   └── Auth/
+│   │       ├── LoginPage.tsx
+│   │       └── RegisterPage.tsx
+│   ├── hooks/
+│   │   ├── useAuth.ts
+│   │   ├── useWebSocket.ts
+│   │   ├── useNotifications.ts
+│   │   └── useLocalStorage.ts
+│   ├── store/
+│   │   ├── index.ts
+│   │   ├── slices/
+│   │   │   ├── authSlice.ts
+│   │   │   ├── financialSlice.ts
+│   │   │   └── budgetSlice.ts
+│   │   └── api/
+│   │       ├── authApi.ts
+│   │       ├── recordsApi.ts
+│   │       └── budgetsApi.ts
+│   ├── services/
+│   │   ├── api.ts
+│   │   ├── websocket.ts
+│   │   ├── auth.ts
+│   │   └── storage.ts
+│   ├── utils/
+│   │   ├── validators.ts
+│   │   ├── formatters.ts
+│   │   ├── constants.ts
+│   │   └── helpers.ts
+│   ├── types/
+│   │   ├── auth.ts
+│   │   ├── financial.ts
+│   │   ├── budget.ts
+│   │   └── api.ts
+│   ├── styles/
+│   │   ├── theme.ts
+│   │   ├── globals.css
+│   │   └── components/
+│   └── assets/
+├── tests/
+│   └── components/
+├── cypress/
+│   └── e2e/
+├── package.json
+├── vite.config.ts
+├── tsconfig.json
+└── README.md
